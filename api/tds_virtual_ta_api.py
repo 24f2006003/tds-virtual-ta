@@ -22,7 +22,12 @@ load_dotenv()
 
 # OpenAI configuration
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    raise ValueError("OPENAI_API_KEY environment variable is not set")
+
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")
+if not OPENAI_BASE_URL:
+    raise ValueError("OPENAI_BASE_URL environment variable is not set")
 
 client = OpenAI(
     api_key=OPENAI_API_KEY,
