@@ -67,10 +67,16 @@ POST /query
    ```
 
 3. Set up environment variables in `.env`:
+   ```env
+   # Your OpenAI API key (required)
+   OPENAI_API_KEY=sk-...
+
+   OpenAI API base URL (required)
+   # For OpenAI, use: https://api.openai.com/v1
+   OPENAI_BASE_URL=https://api.openai.com/v1
    ```
-   OPENAI_API_KEY=your_api_key
-   OPENAI_BASE_URL=your_base_url
-   ```
+
+   Note: Never commit your `.env` file to version control. Add it to `.gitignore` to prevent accidental commits.
 
 4. Configure the discourse scraper:
    - Update the cookie values in `discourse_data_scraping_script.py`
