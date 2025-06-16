@@ -1,104 +1,111 @@
-# TDS Virtual TA
+# TDS Virtual Teaching Assistant
 
-A Virtual Teaching Assistant API for IIT Madras Tools in Data Science course that automatically answers student questions based on course content and Discourse discussions.
+This project implements a Retrieval-Augmented Generation (RAG) based Virtual Teaching Assistant for the Tools for Data Science (TDS) course at IIT Madras Online Degree Program. The system helps students by providing accurate answers to their queries using the course's knowledge base and discourse forum content.
 
 ## Features
 
-- 🤖 **AI-Powered Responses**: Uses advanced language models to provide contextual answers
-- 📚 **Course Content Integration**: Searches through TDS course materials
-- 💬 **Discourse Integration**: Includes relevant discussions from course forums
-- 🖼️ **Image Processing**: Handles base64 image attachments for visual questions
-- ⚡ **Fast Response**: Optimized for <30 second response times
-- 🔍 **Hybrid Search**: Combines semantic and keyword search for better accuracy
+- **RAG-based Question Answering**: Utilizes OpenAI's language models combined with a custom retrieval system
+- **Multi-source Knowledge Base**: Integrates content from course materials and discourse forum discussions
+- **Intelligent Context Retrieval**: Uses FAISS for efficient similarity search and SentenceTransformer for generating embeddings
+- **Follow-up Detection**: Automatically identifies and includes relevant TA follow-up posts for comprehensive answers
+- **FastAPI Backend**: Provides a robust and scalable REST API interface
+- **Efficient Vector Search**: Uses FAISS for fast similarity search operations
+
+## Components
+
+1. **Data Collection (`discourse_data_scraping_script.py`)**
+   - Scrapes TDS course forum posts
+   - Filters content based on date range
+   - Saves data in JSONL format
+
+2. **API Server (`tds_virtual_ta_api.py`)**
+   - Implements the RAG pipeline
+   - Handles question-answering logic
+   - Provides REST API endpoints
+   - Uses FAISS for vector similarity search
+   - Integrates with OpenAI's API
 
 ## API Usage
 
 ### Endpoint
 ```
-POST /api/
+POST /query
 ```
 
 ### Request Format
 ```json
 {
-  "question": "Your question here",
-  "image": "base64_encoded_image (optional)"
+    "question": "Your question here",
+    "image": "Optional base64 image data"
 }
 ```
 
 ### Response Format
 ```json
 {
-  "answer": "Detailed answer based on course content",
-  "links": [
-    {
-      "url": "https://relevant-link.com",
-      "text": "Description of the linked content"
-    }
-  ]
+    "answer": "Detailed answer",
+    "links": [
+        {
+            "url": "Reference URL",
+            "text": "Reference description"
+        }
+    ]
 }
 ```
 
-### Example Usage
+## Setup
 
-```bash
-# Text-only question
-curl "https://your-deployment.vercel.app/api/" \
-  -H "Content-Type: application/json" \
-  -d '{"question": "How do I read a CSV file in pandas?"}'
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/24f2006003/tds-virtual-ta.git
+   cd tds-virtual-ta
+   ```
 
-# Question with image
-curl "https://your-deployment.vercel.app/api/" \
-  -H "Content-Type: application/json" \
-  -d "{\"question\": \"What does this error mean?\", \"image\": \"$(base64 -w0 error_screenshot.png)\"}"
-```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Installation & Setup
+3. Set up environment variables in `.env`:
+   ```
+   OPENAI_API_KEY=your_api_key
+   OPENAI_BASE_URL=your_base_url
+   ```
 
-### 1. Clone Repository
-```bash
-git clone https://github.com/24f2006003/tds-virtual-ta
-cd tds-virtual-ta
-```
+4. Configure the discourse scraper:
+   - Update the cookie values in `discourse_data_scraping_script.py`
+   - Set the desired date range for data collection
 
-### 2. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
+## Usage
 
-### 3. Scrape Data
-```bash
-# Scrape course content
-python -m discourse_data_scraping_script.py
+1. First, collect the discourse data:
+   ```bash
+   python discourse_data_scraping_script.py
+   ```
 
-# Scrape Discourse posts (BONUS feature)
-python -m discourse_data_scraping_script --start-date 2025-01-01 --end-date 2025-04-14
-```
+2. Start the FastAPI server:
+   ```bash
+   uvicorn tds_virtual_ta_api:app --reload
+   ```
 
-### 4. Run Locally
-```bash
-uvicorn main:app --reload --port 8000
-```
+3. The API will be available at `http://localhost:8000`
 
-### 5. Deploy to Vercel
-```bash
-# Install Vercel CLI
-npm i -g vercel
+## Technical Details
 
-# Deploy
-vercel --prod
-```
+- Uses `all-MiniLM-L6-v2` model for generating embeddings
+- Implements FAISS for efficient similarity search
+- Supports CORS middleware for cross-origin requests
+- Includes comprehensive error handling and logging
 
+## Dependencies
 
-
-## Bonus Features
-
-### ✅ Discourse Scraping Script (1 point)
-The `discourse_data_scraping_script.py` script can scrape TDS Discourse posts within any date range:
-
-```bash
-python -m scraper.discourse_scraper --start-date 2025-01-01 --end-date 2025-04-14 --output data/posts.json
-```
+- FastAPI & Uvicorn for API server
+- OpenAI API for language model integration
+- FAISS for vector similarity search
+- SentenceTransformers for embedding generation
+- Python-dotenv for environment management
+- NumPy for numerical operations
+- Pydantic for data validation
 
 ### ✅ Production-Ready Deployment (2 points)
 - Deployed on Vercel with minimal configuration
