@@ -2,17 +2,18 @@
     "version": 2,
     "builds": [
         {
-            "src": "api/*.py",
+            "src": "tds_virtual_ta_api.py",
             "use": "@vercel/python",
             "config": {
-                "runtime": "python3.9"
+                "runtime": "python3.11",
+                "maxLambdaSize": "15mb"
             }
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "api/index.py"
+            "dest": "tds_virtual_ta_api.py"
         }
     ]
 }

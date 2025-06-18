@@ -204,29 +204,6 @@ class RagPipeline:
         scores, indices = self.index.search(np.array([query_vec]), top_k)
         return [self.documents[idx] for idx in indices[0] if idx < len(self.documents)]
 
-    # Original One ##########################
-    # def answer_question(self, query: str) -> dict:
-    #     similar_docs = self.search_similar(query)
-    #     if not similar_docs:
-    #         return {"answer": "No relevant information found.", "source_urls": []}
-
-    #     context = "\n---\n".join(doc.content for doc in similar_docs)
-
-    #     from openai import OpenAI
-    #     client = OpenAI()
-    #     response = client.chat.completions.create(
-    #         model="gpt-3.5-turbo",
-    #         temperature=0,
-    #         messages=[
-    #             {"role": "system", "content": "You are a helpful TA for a Data Science course. Answer only based on the given context. If unsure, say 'No information available'."},
-    #             {"role": "user", "content": f"Context:\n{context}\n\nQuestion: {query}\nAnswer:"}
-    #         ]
-    #     )
-    #     answer = response.choices[0].message.content.strip()
-    #     source_urls = [doc.url for doc in similar_docs]
-    #     return {"answer": answer, "source_urls": source_urls}
-
-    # New One
     def answer_question(self, query: str) -> dict:
         similar_docs = self.search_similar(query)
         if not similar_docs:
